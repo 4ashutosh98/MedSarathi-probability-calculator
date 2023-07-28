@@ -1,0 +1,7 @@
+First Name,Last Name,Email,Year of Application,Has the user given step1,Numerical/Letter grade,Letter grade,step1 score,number of step1 failures,Has the user taken step2,step2 score,number of step2 failures,Has the user given step3?,step3 score,number of step3 failures,Visa needed,graduation year,Speciality,Clinical Experience (in months),Number of Research publications published,Research Experience (in months),Does user have Prior Residency,Does prior residency match primary specialty,Predicted Probably
+Ashutosh,Choudhari,4ashutosh98@gmail.com,2022,Yes,Num,Pass,240,1,Yes,240,0,Yes,240,0,Yes,2020,intmed,14,0,12,Yes,Yes,1
+Ashutosh,Choudhari,4ashutosh98@gmail.com,2022,Yes,Num,Pass,240,1,Yes,240,0,Yes,240,0,Yes,2020,intmed,14,0,12,Yes,Yes,1.0
+Ashutosh,Choudhari,4ashutosh98@gmail.com,2022,Yes,Num,Pass,240,0,Yes,245,0,Yes,243,0,Yes,2020,patho,14,0,6,Yes,Yes,1.0
+Ashutosh,Choudhari,4ashutosh98@gmail.com,2022,Yes,Num,Pass,196,2,No,236,0,No,0,0,Yes,2020,psych,0,0,0,No,No,1.0
+Ashutosh,Choudhari,4ashutosh98@gmail.com,2022,Yes,Let,Pass,0,0,Yes,200,3,No,0,0,No,202,pedia,0,0,0,No,No,0.0
+Ashutosh,Choudhari,4ashutosh98@gmail.com,2022,Yes,Let,Pass,0,1,Yes,210,2,No,0,0,No,2020,pedia,0,0,0,No,No,0.0

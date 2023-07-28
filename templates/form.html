@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Probability Calculator</h1>
+
+<h2>User Information</h2>
+
+<h4>Please enter all the fields. Leave no field blank.</h4>
+
+<form action="/" method="post">
+  <label for="fname">First name:</label><br>
+  <input type="text" id="fname" name="fname"><br>
+  
+  <label for="lname">Last name:</label><br>
+  <input type="text" id="lname" name="lname"><br>
+
+  <label for="email">Email:</label><br>
+  <input type="email" id="email" name="email"><br>
+
+  <label for="primary_speciality">Select Primary Speciality:</label><br>
+  <select id="primary_speciality" name="primary_speciality">
+    <option value="anesth">Anesthiology</option>
+    <option value="intmed">Internal Medicine</option>
+    <option value="fammed">Family Medicine</option>
+    <option value="patho">Pathology</option>
+    <option value="neuro">Neurology</option>
+    <option value="psych">Psychiatry</option>
+    <option value="pedia">Pediatrics</option>
+  </select><br>
+
+  <label for="year_of_application">Year of Application (note: the month of the application is always september):</label><br>
+  <input type="number" id="year_of_application" name="year_of_application"><br>
+
+  <label for="graduation_year">Enter Graduation Year:</label><br>
+  <input type="number" id="graduation_year" name="graduation_year"><br>
+
+  <label for="step1_exam">Have you appeared for Step 1 Exam?</label><br>
+  <input type="radio" id="step1_exam_yes" name="step1_exam" value="Yes">
+  <label for="step1_exam_yes">Yes</label>
+  <input type="radio" id="step1_exam_no" name="step1_exam" value="No">
+  <label for="step1_exam_no">No</label><br>
+
+  <label for="step1_type">Is your score a numerical score or a letter grade?</label><br>
+  <select id="step1_type" name="step1_type">
+    <option value="Num">Numerical</option>
+    <option value="Let">Letter</option>
+  </select><br>
+
+  <label for="step1_letter_grade">What is your step 1 letter grade? (note: enter pass if you have passed with a numerical score or enter fail.):</label><br>
+  <select id="step1_letter_grade" name="step1_letter_grade">
+    <option value="Pass">Pass</option>
+    <option value="Fail">Fail</option>
+  </select><br>
+
+  <label for="step1_num_score">Enter Step 1 Score (note: enter 0 if step 1 exam is not taken):</label><br>
+  <input type="number" id="step1_num_score" name="step1_num_score"><br>
+
+  <label for="step1_failures">Enter Step 1 Failures:</label><br>
+  <input type="number" id="step1_failures" name="step1_failures"><br>
+
+  <label for="step2_exam">Have you appeared for Step 2 Exam?</label><br>
+  <input type="radio" id="step2_exam_yes" name="step2_exam" value="Yes">
+  <label for="step2_exam_yes">Yes</label>
+  <input type="radio" id="step2_exam_no" name="step2_exam" value="No">
+  <label for="step2_exam_no">No</label><br>
+
+  <label for="step2_score">Enter Step 2 Score (note: enter 0 if step 2 exam is not taken):</label><br>
+  <input type="number" id="step2_score" name="step2_score"><br>
+
+  <label for="step2_failures">Enter Step 2 Failures:</label><br>
+  <input type="number" id="step2_failures" name="step2_failures"><br>
+
+  <label for="step3_exam">Have you appeared for Step 3 Exam?</label><br>
+  <input type="radio" id="step3_exam_yes" name="step3_exam" value="Yes">
+  <label for="step3_exam_yes">Yes</label>
+  <input type="radio" id="step3_exam_no" name="step3_exam" value="No">
+  <label for="step3_exam_no">No</label><br>
+
+  <label for="step3_score">Enter Step 3 Score (note: enter 0 if step 3 exam is not taken):</label><br>
+  <input type="number" id="step3_score" name="step3_score"><br>
+
+  <label for="step3_failures">Enter Step 3 Failures:</label><br>
+  <input type="number" id="step3_failures" name="step3_failures"><br>
+
+  <label for="visa_residency">Do you need Visa Residency?</label><br>
+  <input type="radio" id="visa_residency_yes" name="visa_residency" value="Yes">
+  <label for="visa_residency_yes">Yes</label>
+  <input type="radio" id="visa_residency_no" name="visa_residency" value="No">
+  <label for="visa_residency_no">No</label><br>
+
+  <label for="clinical_experience_months">Enter Clinical Experience (in months):</label><br>
+  <input type="number" id="clinical_experience_months" name="clinical_experience_months"><br>
+
+  <label for="research_publications">Enter number of research publications published:</label><br>
+  <input type="number" id="research_publications" name="research_publications"><br>
+
+  <label for="research_experience_months">Enter Research Experience (in months):</label><br>
+  <input type="number" id="research_experience_months" name="research_experience_months"><br>
+
+  <label for="prior_residency">Do you have Prior Residency?</label><br>
+  <input type="radio" id="prior_residency_yes" name="prior_residency" value="Yes">
+  <label for="prior_residency_yes">Yes</label>
+  <input type="radio" id="prior_residency_no" name="prior_residency" value="No">
+  <label for="prior_residency_no">No</label><br>
+
+  <label for="prior_residency_match">Does your Prior Residency match primary specialty?</label><br>
+  <input type="radio" id="prior_residency_match_yes" name="prior_residency_match" value="Yes">
+  <label for="prior_residency_match_yes">Yes</label>
+  <input type="radio" id="prior_residency_match_no" name="prior_residency_match" value="No">
+  <label for="prior_residency_match_no">No</label><br>
+
+  <input type="submit" value="Submit">
+</form> 
+
+{% if probability %}
+    <label for="probability">Your probability for your primary residency is:</label>
+    <input type="text" id="probability" name="probability" value="{{ '%.2f'|format(probability) }}" readonly><br>
+{% endif %}
+
+</body>
+</html>
