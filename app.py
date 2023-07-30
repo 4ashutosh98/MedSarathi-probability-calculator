@@ -23,7 +23,7 @@ def index():
             'pediat': [-48.34,     0.23,   0.17,   0.13, -0.45, -0.10, 0.43,     0.13]
         }"""
 
-        # Read the CSV file into a pandas DataFrame
+        # Read the CSV file containing the weights/coefficients into a pandas DataFrame
         df = pd.read_csv('coefs.csv')
 
         # Convert the DataFrame into a dictionary, where the keys are the specialties and the values are the coefficients
