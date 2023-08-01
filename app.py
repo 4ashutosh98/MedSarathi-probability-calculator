@@ -3,15 +3,19 @@ import csv
 import pandas as pd
 from flask import Flask, render_template, request
 from sqlalchemy import create_engine
+import os
+import psycopg2
 
 app = Flask(__name__)
 
 # Set up the database connection
 DATABASE_URL = 'postgresql-convex-24895'  # Replace this with actual URL
-engine = create_engine(DATABASE_URL)
+# engine = create_engine(DATABASE_URL)
+DATABASE_URL = os.environ['DATABASE_URL']
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
 # Create the table if it does not exist
-conn = engine.connect()
+# conn = engine.connect()
 query = '''
 CREATE TABLE IF NOT EXISTS responses_data (
     firstname VARCHAR(100),
@@ -215,7 +219,8 @@ def index():
             writer.writerow(data_to_save)"""
 
         # Create a connection to the database
-        conn = engine.connect()
+        # conn = engine.connect()
+        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
         # Create a SQL query to insert the data
         query = '''
