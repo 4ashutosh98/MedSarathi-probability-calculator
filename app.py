@@ -2,8 +2,46 @@ import math
 import csv
 import pandas as pd
 from flask import Flask, render_template, request
+from sqlalchemy import create_engine
 
 app = Flask(__name__)
+
+# Set up the database connection
+DATABASE_URL = 'postgresql-convex-24895'  # Replace this with actual URL
+engine = create_engine(DATABASE_URL)
+
+# Create the table if it does not exist
+conn = engine.connect()
+query = '''
+CREATE TABLE IF NOT EXISTS responses_data (
+    firstname VARCHAR(100),
+    lastname VARCHAR(100),
+    email VARCHAR(100),
+    year_of_application INTEGER,
+    step1_exam VARCHAR(10),
+    step1_type VARCHAR(10),
+    step1_letter_grade VARCHAR(10),
+    step1_num_score INTEGER,
+    step1_failures INTEGER,
+    step2_exam VARCHAR(10),
+    step2_score INTEGER,
+    step2_failures INTEGER,
+    step3_exam VARCHAR(10),
+    step3_score INTEGER,
+    step3_failures INTEGER,
+    visa_residency VARCHAR(10),
+    graduation_year INTEGER,
+    primary_speciality VARCHAR(50),
+    clinical_experience_months INTEGER,
+    research_publications INTEGER,
+    research_experience_months INTEGER,
+    prior_residency VARCHAR(10),
+    prior_residency_match VARCHAR(10),
+    probability FLOAT
+);
+'''
+conn.execute(query)
+conn.close()
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -163,7 +201,7 @@ def index():
         probability = math.exp(log_odds) / (1 + math.exp(log_odds))
         # probability = 1 / (1 + math.exp(-log_odds))
 
-        # Gather the user input data to save in the csv file
+        """# Gather the user input data to save in the csv file
         data_to_save = [firstname, lastname, email, year_of_application, step1_exam, step1_type,
                         step1_letter_grade, step1_num_score, step1_failures, step2_exam, step2_score,
                         step2_failures, step3_exam, step3_score, step3_failures, visa_residency,
@@ -174,7 +212,23 @@ def index():
         # Save the data in the CSV file
         with open('responses_data.csv', 'a', newline='\n') as file:
             writer = csv.writer(file)
-            writer.writerow(data_to_save)
+            writer.writerow(data_to_save)"""
+
+        # Create a connection to the database
+        conn = engine.connect()
+
+        # Create a SQL query to insert the data
+        query = '''
+        INSERT INTO responses_data (firstname, lastname, email, year_of_application, step1_exam,
+                                    step1_type, step1_letter_grade, step1_num_score, step1_failures,
+                                    step2_exam, step2_score, step2_failures, step3_exam, step3_score,
+                                    step3_failures, visa_residency, graduation_year, primary_speciality,
+                                    clinical_experience_months, research_publications, research_experience_months,
+                                    prior_residency, prior_residency_match, probability)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+        '''
+        conn.execute(query, data_to_save)
+        conn.close()
 
         # Reset the variables to null strings
         firstname = ''
