@@ -9,7 +9,7 @@ import psycopg2
 app = Flask(__name__)
 
 # Set up the database connection
-DATABASE_URL = 'postgresql-convex-24895'  # Replace this with actual URL
+DATABASE_URL = 'postgres://wsevvgeutfpvam:d540f4d5f5d7108592d662010614b1467a1a2c49f3045de1851432f63dcef8ec@ec2-3-92-151-217.compute-1.amazonaws.com:5432/d744mbeb012k13'  # Replace this with actual URL
 # engine = create_engine(DATABASE_URL)
 DATABASE_URL = os.environ['DATABASE_URL']
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
