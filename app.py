@@ -201,7 +201,7 @@ def index():
         probability = math.exp(log_odds) / (1 + math.exp(log_odds))
         # probability = 1 / (1 + math.exp(-log_odds))
 
-        """# Gather the user input data to save in the csv file
+        # Gather the user input data to save in the csv file
         data_to_save = [firstname, lastname, email, year_of_application, step1_exam, step1_type,
                         step1_letter_grade, step1_num_score, step1_failures, step2_exam, step2_score,
                         step2_failures, step3_exam, step3_score, step3_failures, visa_residency,
@@ -209,7 +209,7 @@ def index():
                         research_publications, research_experience_months, prior_residency,
                         prior_residency_match, float('{:.2f}'.format(probability))]
 
-        # Save the data in the CSV file
+        """# Save the data in the CSV file
         with open('responses_data.csv', 'a', newline='\n') as file:
             writer = csv.writer(file)
             writer.writerow(data_to_save)"""
