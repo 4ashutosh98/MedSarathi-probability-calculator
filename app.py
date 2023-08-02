@@ -8,8 +8,8 @@ import psycopg2
 
 app = Flask(__name__)
 
-# Set up the database connection
-DATABASE_URL = 'postgres://wsevvgeutfpvam:d540f4d5f5d7108592d662010614b1467a1a2c49f3045de1851432f63dcef8ec@ec2-3-92-151-217.compute-1.amazonaws.com:5432/d744mbeb012k13'  # Replace this with actual URL
+"""# Set up the database connection
+DATABASE_URL = 'postgres://kilsjeyhlbejib:5de43237c25510dc62597c35e4b942cdac524ca0140366f40ba1d279dcbb8f8e@ec2-52-6-117-96.compute-1.amazonaws.com:5432/d1madvfr5nb67o'  # Replace this with actual URL
 # engine = create_engine(DATABASE_URL)
 DATABASE_URL = os.environ['DATABASE_URL']
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
@@ -45,11 +45,16 @@ CREATE TABLE IF NOT EXISTS responses_data (
 );
 '''
 conn.execute(query)
-conn.close()
+conn.close()"""
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def index():
+    return render_template('form.html')
+
+
+@app.route('/submit', methods=['POST'])
+def submit():
     probability = None
 
     if request.method == 'POST':
@@ -205,7 +210,7 @@ def index():
         probability = math.exp(log_odds) / (1 + math.exp(log_odds))
         # probability = 1 / (1 + math.exp(-log_odds))
 
-        # Gather the user input data to save in the csv file
+        # Gather the user input data to save in the database table
         data_to_save = [firstname, lastname, email, year_of_application, step1_exam, step1_type,
                         step1_letter_grade, step1_num_score, step1_failures, step2_exam, step2_score,
                         step2_failures, step3_exam, step3_score, step3_failures, visa_residency,
@@ -218,7 +223,7 @@ def index():
             writer = csv.writer(file)
             writer.writerow(data_to_save)"""
 
-        # Create a connection to the database
+        """# Create a connection to the database
         # conn = engine.connect()
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
@@ -233,9 +238,9 @@ def index():
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         '''
         conn.execute(query, data_to_save)
-        conn.close()
+        conn.close()"""
 
-        # Reset the variables to null strings
+        """# Reset the variables to null strings
         firstname = ''
         lastname = ''
         email = ''
@@ -260,9 +265,9 @@ def index():
         graduation_year = None
         clinical_experience_months = None
         research_publications = None
-        research_experience_months = None
+        research_experience_months = None"""
 
-    return render_template('form.html', probability=probability)
+    return render_template('submit.html', firstname=firstname, lastname=lastname, email=email, primary_speciality=primary_speciality, year_of_application=year_of_application, graduation_year=graduation_year, step1_exam=step1_exam, step1_type=step1_type, step1_letter_grade=step1_letter_grade, step1_num_score=step1_num_score, step1_failures=step1_failures, step2_exam=step2_exam, step2_score=step2_score, step2_failures=step2_failures, step3_exam=step3_exam, step3_score=step3_score, step3_failures=step3_failures, visa_residency=visa_residency, prior_residency=prior_residency, prior_residency_match=prior_residency_match, probability=probability)
 
 
 if __name__ == '__main__':
