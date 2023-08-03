@@ -1,11 +1,8 @@
 import math
-import csv
 import pandas as pd
 from flask import Flask, render_template, request
 from sqlalchemy import create_engine
 from flask_sqlalchemy import SQLAlchemy
-import os
-import psycopg2
 
 app = Flask(__name__)
 
