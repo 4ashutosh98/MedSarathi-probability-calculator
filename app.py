@@ -3,10 +3,80 @@ import csv
 import pandas as pd
 from flask import Flask, render_template, request
 from sqlalchemy import create_engine
+from flask_sqlalchemy import SQLAlchemy
 import os
 import psycopg2
 
 app = Flask(__name__)
+
+ENV = 'dev'
+
+if ENV == "dev":
+    app.debug = True
+    app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://postgres:ashutosh49@localhost:5432/msresponsesdata'
+else:
+    app.debug = False
+    app.config["SQLALCHEMY_DATABASE_URI"] = ''
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+
+class Responses(db.Model):
+    __tablename__ = 'responses'
+    id = db.Column(db.Integer, primary_key=True)
+    firstname = db.Column(db.String(200))
+    lastname = db.Column(db.String(200))
+    email = db.Column(db.String(200))
+    year_of_application = db.Column(db.Integer)
+    step1_exam = db.Column(db.String(50))
+    step1_type = db.Column(db.String(50))
+    step1_letter_grade = db.Column(db.String(50))
+    step1_num_score = db.Column(db.Integer)
+    step1_failures = db.Column(db.Integer)
+    step2_exam = db.Column(db.String(50))
+    step2_score = db.Column(db.Integer)
+    step2_failures = db.Column(db.Integer)
+    step3_exam = db.Column(db.String(50))
+    step3_score = db.Column(db.Integer)
+    step3_failures = db.Column(db.Integer)
+    visa_residency = db.Column(db.String(50))
+    graduation_year = db.Column(db.Integer)
+    primary_speciality = db.Column(db.String(200))
+    clinical_experience_months = db.Column(db.Integer)
+    research_publications = db.Column(db.Integer)
+    research_experience_months = db.Column(db.Integer)
+    prior_residency = db.Column(db.String(50))
+    prior_residency_match = db.Column(db.String(50))
+    probability = db.Column(db.Float)
+
+    def __init__(self, firstname, lastname, email, year_of_application, step1_exam, step1_type, step1_letter_grade, step1_num_score, step1_failures, step2_exam, step2_score, step2_failures, step3_exam, step3_score, step3_failures, visa_residency, graduation_year, primary_speciality, clinical_experience_months, research_publications, research_experience_months, prior_residency, prior_residency_match, probability):
+        self.firstname = firstname
+        self.lastname = lastname
+        self.email = email
+        self.year_of_application = year_of_application
+        self.step1_exam = step1_exam
+        self.step1_type = step1_type
+        self.step1_letter_grade = step1_letter_grade
+        self.step1_num_score = step1_num_score
+        self.step1_failures = step1_failures
+        self.step2_exam = step2_exam
+        self.step2_score = step2_score
+        self.step2_failures = step2_failures
+        self.step3_exam = step3_exam
+        self.step3_score = step3_score
+        self.step3_failures = step3_failures
+        self.visa_residency = visa_residency
+        self.graduation_year = graduation_year
+        self.primary_speciality = primary_speciality
+        self.clinical_experience_months = clinical_experience_months
+        self.research_publications = research_publications
+        self.research_experience_months = research_experience_months
+        self.prior_residency = prior_residency
+        self.prior_residency_match = prior_residency_match
+        self.probability = probability
+
 
 """# Set up the database connection
 DATABASE_URL = 'postgres://kilsjeyhlbejib:5de43237c25510dc62597c35e4b942cdac524ca0140366f40ba1d279dcbb8f8e@ec2-52-6-117-96.compute-1.amazonaws.com:5432/d1madvfr5nb67o'  # Replace this with actual URL
@@ -76,6 +146,34 @@ def submit():
         # Convert the DataFrame into a dictionary, where the keys are the specialties and the values are the coefficients
         coefs = df.set_index('speciality').T.to_dict('list')
 
+        # Reset the variables to null strings
+        firstname = ''
+        lastname = ''
+        email = ''
+        step1_exam = ''
+        step1_type = ''
+        step1_letter_grade = ''
+        step2_exam = ''
+        step3_exam = ''
+        visa_residency = ''
+        primary_speciality = ''
+        prior_residency = ''
+        prior_residency_match = ''
+
+        # Reset the variables to null integers
+        year_of_application = None
+        step1_num_score = None
+        step1_failures = None
+        step2_score = None
+        step2_failures = None
+        step3_score = None
+        step3_failures = None
+        graduation_year = None
+        clinical_experience_months = None
+        research_publications = None
+        research_experience_months = None
+
+        # Obtaining the user's data from the HTML file
         firstname = request.form.get('fname')
         lastname = request.form.get('lname')
         email = request.form.get('email')
@@ -102,6 +200,23 @@ def submit():
             request.form.get('research_experience_months'))
         prior_residency = request.form.get('prior_residency')
         prior_residency_match = request.form.get('prior_residency_match')
+
+        # Get all the form fields
+        form_fields = [
+            'fname', 'lname', 'email', 'primary_speciality',
+            'year_of_application', 'graduation_year', 'step1_exam', 'step1_type',
+            'step1_letter_grade', 'step1_num_score', 'step1_failures', 'step2_exam',
+            'step2_score', 'step2_failures', 'step3_exam', 'step3_score',
+            'step3_failures', 'visa_residency', 'clinical_experience_months',
+            'research_publications', 'research_experience_months', 'prior_residency',
+            'prior_residency_match'
+        ]
+
+        # Check that none of the fields are empty or just whitespace
+        for field in form_fields:
+            value = request.form.get(field, '').strip()
+            if value == '':
+                return render_template('form.html', message='Please enter all the fields and then click submit')
 
         # Initialize variables
         step1_score_updated = 0
@@ -211,12 +326,12 @@ def submit():
         # probability = 1 / (1 + math.exp(-log_odds))
 
         # Gather the user input data to save in the database table
-        data_to_save = [firstname, lastname, email, year_of_application, step1_exam, step1_type,
+        '''data_to_save = [firstname, lastname, email, year_of_application, step1_exam, step1_type,
                         step1_letter_grade, step1_num_score, step1_failures, step2_exam, step2_score,
                         step2_failures, step3_exam, step3_score, step3_failures, visa_residency,
                         graduation_year, primary_speciality, clinical_experience_months,
                         research_publications, research_experience_months, prior_residency,
-                        prior_residency_match, float('{:.2f}'.format(probability))]
+                        prior_residency_match, float('{:.2f}'.format(probability))]'''
 
         """# Save the data in the CSV file
         with open('responses_data.csv', 'a', newline='\n') as file:
@@ -267,7 +382,27 @@ def submit():
         research_publications = None
         research_experience_months = None"""
 
-    return render_template('submit.html', firstname=firstname, lastname=lastname, email=email, primary_speciality=primary_speciality, year_of_application=year_of_application, graduation_year=graduation_year, step1_exam=step1_exam, step1_type=step1_type, step1_letter_grade=step1_letter_grade, step1_num_score=step1_num_score, step1_failures=step1_failures, step2_exam=step2_exam, step2_score=step2_score, step2_failures=step2_failures, step3_exam=step3_exam, step3_score=step3_score, step3_failures=step3_failures, visa_residency=visa_residency, prior_residency=prior_residency, prior_residency_match=prior_residency_match, probability=probability)
+        # Creating the Responses object
+        response = Responses(
+            firstname, lastname, email, year_of_application,
+            step1_exam, step1_type, step1_letter_grade, step1_num_score,
+            step1_failures, step2_exam, step2_score, step2_failures,
+            step3_exam, step3_score, step3_failures, visa_residency,
+            graduation_year, primary_speciality, clinical_experience_months,
+            research_publications, research_experience_months, prior_residency,
+            prior_residency_match, probability
+        )
+
+        # Adding to database
+        try:
+            db.session.add(response)
+            db.session.commit()
+            message = "Data stored successfully on the data base!"
+        except:
+            db.session.rollback()
+            message = "Data was not stored successfully on the data base!"
+
+    return render_template('submit.html', firstname=firstname, lastname=lastname, email=email, primary_speciality=primary_speciality, year_of_application=year_of_application, graduation_year=graduation_year, step1_exam=step1_exam, step1_type=step1_type, step1_letter_grade=step1_letter_grade, step1_num_score=step1_num_score, step1_failures=step1_failures, step2_exam=step2_exam, step2_score=step2_score, step2_failures=step2_failures, step3_exam=step3_exam, step3_score=step3_score, step3_failures=step3_failures, visa_residency=visa_residency, prior_residency=prior_residency, prior_residency_match=prior_residency_match, probability=probability, message=message)
 
 
 if __name__ == '__main__':

@@ -8,6 +8,10 @@
 
 <h4>Please enter all the fields. Leave no field blank.</h4>
 
+{% if message %}
+  <p style="color: red;">{{ message }}</p>
+{% endif %}
+
 <form action="/submit" method="POST">
   <label for="fname">First name:</label><br>
   <input type="text" id="fname" name="fname"><br>
