@@ -6,14 +6,14 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-ENV = 'dev'
+ENV = 'prod'
 
 if ENV == "dev":
     app.debug = True
     app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://postgres:ashutosh49@localhost:5432/msresponsesdata'
 else:
     app.debug = False
-    app.config["SQLALCHEMY_DATABASE_URI"] = ''
+    app.config["SQLALCHEMY_DATABASE_URI"] = 'postgres://kilsjeyhlbejib:5de43237c25510dc62597c35e4b942cdac524ca0140366f40ba1d279dcbb8f8e@ec2-52-6-117-96.compute-1.amazonaws.com:5432/d1madvfr5nb67o'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
