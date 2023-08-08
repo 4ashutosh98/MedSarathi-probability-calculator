@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-ENV = 'prod'
+ENV = 'dev'
 
 if ENV == "dev":
     app.debug = True
@@ -73,46 +73,6 @@ class Responses(db.Model):
         self.prior_residency = prior_residency
         self.prior_residency_match = prior_residency_match
         self.probability = probability
-
-
-"""# Set up the database connection
-DATABASE_URL = 'postgres://kilsjeyhlbejib:5de43237c25510dc62597c35e4b942cdac524ca0140366f40ba1d279dcbb8f8e@ec2-52-6-117-96.compute-1.amazonaws.com:5432/d1madvfr5nb67o'  # Replace this with actual URL
-# engine = create_engine(DATABASE_URL)
-DATABASE_URL = os.environ['DATABASE_URL']
-conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-
-# Create the table if it does not exist
-# conn = engine.connect()
-query = '''
-CREATE TABLE IF NOT EXISTS responses_data (
-    firstname VARCHAR(100),
-    lastname VARCHAR(100),
-    email VARCHAR(100),
-    year_of_application INTEGER,
-    step1_exam VARCHAR(10),
-    step1_type VARCHAR(10),
-    step1_letter_grade VARCHAR(10),
-    step1_num_score INTEGER,
-    step1_failures INTEGER,
-    step2_exam VARCHAR(10),
-    step2_score INTEGER,
-    step2_failures INTEGER,
-    step3_exam VARCHAR(10),
-    step3_score INTEGER,
-    step3_failures INTEGER,
-    visa_residency VARCHAR(10),
-    graduation_year INTEGER,
-    primary_speciality VARCHAR(50),
-    clinical_experience_months INTEGER,
-    research_publications INTEGER,
-    research_experience_months INTEGER,
-    prior_residency VARCHAR(10),
-    prior_residency_match VARCHAR(10),
-    probability FLOAT
-);
-'''
-conn.execute(query)
-conn.close()"""
 
 
 @app.route('/', methods=['GET'])
@@ -319,65 +279,7 @@ def submit():
             (coefs[primary_speciality.lower()][6]*usce_updated) + \
             (coefs[primary_speciality.lower()][7]*papers)
 
-        probability = math.exp(log_odds) / (1 + math.exp(log_odds))
-        # probability = 1 / (1 + math.exp(-log_odds))
-
-        # Gather the user input data to save in the database table
-        '''data_to_save = [firstname, lastname, email, year_of_application, step1_exam, step1_type,
-                        step1_letter_grade, step1_num_score, step1_failures, step2_exam, step2_score,
-                        step2_failures, step3_exam, step3_score, step3_failures, visa_residency,
-                        graduation_year, primary_speciality, clinical_experience_months,
-                        research_publications, research_experience_months, prior_residency,
-                        prior_residency_match, float('{:.2f}'.format(probability))]'''
-
-        """# Save the data in the CSV file
-        with open('responses_data.csv', 'a', newline='\n') as file:
-            writer = csv.writer(file)
-            writer.writerow(data_to_save)"""
-
-        """# Create a connection to the database
-        # conn = engine.connect()
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-
-        # Create a SQL query to insert the data
-        query = '''
-        INSERT INTO responses_data (firstname, lastname, email, year_of_application, step1_exam,
-                                    step1_type, step1_letter_grade, step1_num_score, step1_failures,
-                                    step2_exam, step2_score, step2_failures, step3_exam, step3_score,
-                                    step3_failures, visa_residency, graduation_year, primary_speciality,
-                                    clinical_experience_months, research_publications, research_experience_months,
-                                    prior_residency, prior_residency_match, probability)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
-        '''
-        conn.execute(query, data_to_save)
-        conn.close()"""
-
-        """# Reset the variables to null strings
-        firstname = ''
-        lastname = ''
-        email = ''
-        step1_exam = ''
-        step1_type = ''
-        step1_letter_grade = ''
-        step2_exam = ''
-        step3_exam = ''
-        visa_residency = ''
-        primary_speciality = ''
-        prior_residency = ''
-        prior_residency_match = ''
-
-        # Reset the variables to null integers
-        year_of_application = None
-        step1_num_score = None
-        step1_failures = None
-        step2_score = None
-        step2_failures = None
-        step3_score = None
-        step3_failures = None
-        graduation_year = None
-        clinical_experience_months = None
-        research_publications = None
-        research_experience_months = None"""
+        probability = (math.exp(log_odds) / (1 + math.exp(log_odds))) * 100
 
         # Creating the Responses object
         response = Responses(

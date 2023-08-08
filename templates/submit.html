@@ -10,7 +10,25 @@
 <p>First Name: {{ firstname }}</p>
 <p>Last Name: {{ lastname }}</p>
 <p>Email: {{ email }}</p>
-<p>Primary Speciality: {{ primary_speciality }}</p>
+
+{% if primary_speciality == 'anesth' %}
+<p>Primary Speciality: Anesthesiology</p>
+{% elif primary_speciality == 'intmed' %}
+<p>Primary Speciality: Internal Medicine</p>
+{% elif primary_speciality == 'neuro' %}
+<p>Primary Speciality: Neurology</p>
+{% elif primary_speciality == 'patho' %}
+<p>Primary Speciality: Pathology</p>
+{% elif primary_speciality == 'psych' %}
+<p>Primary Speciality: Psychiatry</p>
+{% elif primary_speciality == 'fammed' %}
+<p>Primary Speciality: Family Medicine</p>
+{% elif primary_speciality == 'pedia' %}
+<p>Primary Speciality: Pediatrics</p>
+{% else %}
+<p>Primary Speciality: Unknown</p>
+{% endif %}
+
 <p>Year of Application: {{ year_of_application }}</p>
 <p>Graduation Year: {{ graduation_year }}</p>
 <p>Step 1 Exam: {{ step1_exam }}</p>
@@ -24,8 +42,7 @@
 <p>Step 3 Exam: {{ step3_exam }}</p>
 <p>Step 3 Score: {{ step3_score }}</p>
 <p>Step 3 Failures: {{ step3_failures }}</p>
-<p>Visa Residency: {{ visa_residency }}</p>
-<p>Primary Specialty: {{ primary_speciality }}</p>
+<p>Visa Required: {{ visa_residency }}</p>
 <p>Prior Residency: {{ prior_residency }}</p>
 <p>Does your Prior Residency match primary specialty: {{ prior_residency_match }}</p>
 
