@@ -1,12 +1,11 @@
 import math
 import pandas as pd
 from flask import Flask, render_template, request
-from sqlalchemy import create_engine
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-ENV = 'prod'
+ENV = 'dev'
 
 if ENV == "dev":
     app.debug = True
