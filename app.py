@@ -9,7 +9,7 @@ import io
 app = Flask(__name__)
 app.secret_key = 'roses_are_red_violets_are_blue'
 
-ENV = 'dev'
+ENV = 'prod'
 
 if ENV == "dev":
     app.debug = True
