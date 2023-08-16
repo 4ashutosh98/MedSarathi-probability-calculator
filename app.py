@@ -1,11 +1,15 @@
 import math
 import pandas as pd
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, Response, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+import csv
+import io
 
 app = Flask(__name__)
+app.secret_key = 'roses_are_red_violets_are_blue'
 
-ENV = 'prod'
+ENV = 'dev'
 
 if ENV == "dev":
     app.debug = True
@@ -17,6 +21,76 @@ else:
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+# Admin credentials for simplicity (consider using a more secure method in a production environment)
+ADMIN_USERNAME = "admin"
+ADMIN_PASSWORD = "submax"
+
+class User(UserMixin):
+    pass
+
+@login_manager.user_loader
+def user_loader(username):
+    if username != ADMIN_USERNAME:
+        return
+    user = User()
+    user.id = username
+    return user
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html')
+    
+    username = request.form['username']
+    password = request.form['password']
+
+    if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+        user = User()
+        user.id = username
+        login_user(user)
+        return redirect(url_for('download_page'))
+
+    flash('Invalid username or password')
+    return redirect(url_for('login'))
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return render_template('logout.html')
+
+@app.route('/download-page', methods=['GET'])
+@login_required
+def download_page():
+    return render_template('download.html')
+
+@app.route('/download-database')
+@login_required
+def download_database():
+    data = Responses.query.all()
+    response_output = io.StringIO()
+    writer = csv.writer(response_output)
+
+    # Write header
+    header = [column.name for column in Responses.__table__.columns]
+    writer.writerow(header)
+
+    # Write data rows
+    for row in data:
+        writer.writerow([getattr(row, column.name) for column in Responses.__table__.columns])
+
+    output = Response(
+        response=response_output.getvalue(),
+        mimetype="text/csv",
+        content_type="application/octet-stream",
+    )
+    output.headers["Content-Disposition"] = "attachment;filename=responses_data.csv"
+    return output
 
 
 class Responses(db.Model):
@@ -84,17 +158,6 @@ def submit():
     probability = None
 
     if request.method == 'POST':
-        """coefs = {
-            # 'some other speciality': [-XX.XX, X.XX, X.XX, -X.XX, -X.XX, X.XX, X.XX, X.XX]  # substitute with actual coefficients
-            # 'speci': [constant, step 1, step 2, step 3,  visa,   gap, usce, research]  # these are the columns and below are the weights/coefficients for each specialty.
-            'anesth': [-45.10,     0.27,   0.13,   0.00, -0.41, -0.19, 0.25,     0.08],
-            'intmed': [-57.91,     0.24,   0.20,   0.14, -0.48, -0.09, 0.41,     0.13],
-            'neuro': [-48.43,     0.24,   0.20,   0.14, -0.47, -0.09, 0.39,     0.14],
-            'patho': [-35.36,     0.17,   0.19,   0.12, -0.48, -0.08, 0.44,     0.13],
-            'psych': [-35.36,     0.17,   0.19,   0.12, -0.48, -0.08, 0.44,     0.13],
-            'fammed': [-47.82,     0.22,   0.17,   0.13, -0.44, -0.11, 0.45,     0.12],
-            'pediat': [-48.34,     0.23,   0.17,   0.13, -0.45, -0.10, 0.43,     0.13]
-        }"""
 
         # Read the CSV file containing the weights/coefficients into a pandas DataFrame
         df = pd.read_csv('coefs.csv')
@@ -181,8 +244,7 @@ def submit():
         visa_updated = 0
         usce_updated = 0
         gap = 0
-        research_publications = 0
-        papers = 0
+        research = 0
 
         # Calculate score updates
 
@@ -270,13 +332,13 @@ def submit():
 
         # research papers/research experience
         # Here it is assumed that 6 months of research experience is equivalent to 1 reasearch paper.
-        papers = research_publications + round(research_experience_months / 6)
+        research = research_publications + round(research_experience_months / 6)
 
         # Calculating logodds
         log_odds = coefs[primary_speciality.lower()][0] + (coefs[primary_speciality.lower()][1]*step1_score_updated) + (coefs[primary_speciality.lower()][2]*step2_score_updated) + (coefs[primary_speciality.lower()][3]*step3_score_updated) + \
             (coefs[primary_speciality.lower()][4]*visa_updated) + (coefs[primary_speciality.lower()][5]*gap) + \
             (coefs[primary_speciality.lower()][6]*usce_updated) + \
-            (coefs[primary_speciality.lower()][7]*papers)
+            (coefs[primary_speciality.lower()][7]*research)
 
         probability = (math.exp(log_odds) / (1 + math.exp(log_odds))) * 100
 
@@ -300,7 +362,7 @@ def submit():
             db.session.rollback()
             message = "Data was not stored successfully on the data base!"
 
-    return render_template('submit.html', firstname=firstname, lastname=lastname, email=email, primary_speciality=primary_speciality, year_of_application=year_of_application, graduation_year=graduation_year, step1_exam=step1_exam, step1_type=step1_type, step1_letter_grade=step1_letter_grade, step1_num_score=step1_num_score, step1_failures=step1_failures, step2_exam=step2_exam, step2_score=step2_score, step2_failures=step2_failures, step3_exam=step3_exam, step3_score=step3_score, step3_failures=step3_failures, visa_residency=visa_residency, prior_residency=prior_residency, prior_residency_match=prior_residency_match, probability=probability, message=message)
+    return render_template('submit.html', firstname=firstname, lastname=lastname, email=email, primary_speciality=primary_speciality, year_of_application=year_of_application, graduation_year=graduation_year, step1_exam=step1_exam, step1_type=step1_type, step1_letter_grade=step1_letter_grade, step1_num_score=step1_num_score, step1_failures=step1_failures, step2_exam=step2_exam, step2_score=step2_score, step2_failures=step2_failures, step3_exam=step3_exam, step3_score=step3_score, step3_failures=step3_failures, visa_residency=visa_residency, clinical_experience_months=clinical_experience_months, research_publications=research_publications, research_experience_months=research_experience_months, prior_residency=prior_residency, prior_residency_match=prior_residency_match, probability=probability, message=message)
 
 
 if __name__ == '__main__':
