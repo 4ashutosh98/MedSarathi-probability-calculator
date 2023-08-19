@@ -1,15 +1,17 @@
+from datetime import datetime
 import math
 import pandas as pd
 from flask import Flask, render_template, request, Response, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
+from flask_migrate import Migrate
 import csv
 import io
 
 app = Flask(__name__)
 app.secret_key = 'roses_are_red_violets_are_blue'
 
-ENV = 'prod'
+ENV = 'dev'
 
 if ENV == "dev":
     app.debug = True
@@ -21,6 +23,8 @@ else:
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -120,6 +124,7 @@ class Responses(db.Model):
     prior_residency = db.Column(db.String(50))
     prior_residency_match = db.Column(db.String(50))
     probability = db.Column(db.Float)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __init__(self, firstname, lastname, email, year_of_application, step1_exam, step1_type, step1_letter_grade, step1_num_score, step1_failures, step2_exam, step2_score, step2_failures, step3_exam, step3_score, step3_failures, visa_residency, graduation_year, primary_speciality, clinical_experience_months, research_publications, research_experience_months, prior_residency, prior_residency_match, probability):
         self.firstname = firstname
