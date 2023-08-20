@@ -1,0 +1,27 @@
+Thank you for using our Residency Admit Probability Calculator!
+
+Here are your results:
+
+Name: {{ firstname }} {{ lastname }}
+Email: {{ email }}
+Primary Speciality: 
+{% if primary_speciality == 'anesth' %}
+Anesthesiology
+{% elif primary_speciality == 'intmed' %}
+Internal Medicine
+{% elif primary_speciality == 'neuro' %}
+Neurology
+{% elif primary_speciality == 'patho' %}
+Pathology
+{% elif primary_speciality == 'psych' %}
+Psychiatry
+{% elif primary_speciality == 'fammed' %}
+Family Medicine
+{% elif primary_speciality == 'pediat' %}
+Pediatrics
+{% else %}
+Unknown
+{% endif %}
+Probability: {{ probability }}%
+
+For further details or assistance, visit our website at https://www.usmlesarthi.com or contact our support team.

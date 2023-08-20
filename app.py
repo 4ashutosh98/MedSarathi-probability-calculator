@@ -7,9 +7,30 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from flask_migrate import Migrate
 import csv
 import io
+from flask_mail import Mail, Message
 
 app = Flask(__name__)
 app.secret_key = 'roses_are_red_violets_are_blue'
+
+
+app.config['MAIL_SERVER']='sandbox.smtp.mailtrap.io'
+app.config['MAIL_PORT'] = 2525
+app.config['MAIL_USERNAME'] = '7f5f8937ce4af5'
+app.config['MAIL_PASSWORD'] = '2ec22f4dba124f'
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_DEFAULT_SENDER'] = 'your_email@example.com'
+
+
+mail = Mail(app)
+
+def send_email(to, subject, template, **kwargs):
+    msg = Message(subject, sender='another_email@example.com', recipients=[to]) #sender=app.config.get("MAIL_DEFAULT_SENDER")
+    msg.body = render_template(template + '.txt', **kwargs)
+    msg.html = render_template(template + '.html', **kwargs)
+    mail.send(msg)
+    print("Email Sent")
+
 
 ENV = 'prod'
 
@@ -362,10 +383,13 @@ def submit():
         try:
             db.session.add(response)
             db.session.commit()
+            send_email(email, 'Submission Confirmation', 'email', firstname=firstname, lastname=lastname, email=email, primary_speciality=primary_speciality, probability=probability)
             message = "Data stored successfully on the data base!"
-        except:
+        except Exception as e:
             db.session.rollback()
+            print("Error encountered:", str(e))  # This will print the error to your console
             message = "Data was not stored successfully on the data base!"
+
 
     return render_template('submit.html', firstname=firstname, lastname=lastname, email=email, primary_speciality=primary_speciality, year_of_application=year_of_application, graduation_year=graduation_year, step1_exam=step1_exam, step1_type=step1_type, step1_letter_grade=step1_letter_grade, step1_num_score=step1_num_score, step1_failures=step1_failures, step2_exam=step2_exam, step2_score=step2_score, step2_failures=step2_failures, step3_exam=step3_exam, step3_score=step3_score, step3_failures=step3_failures, visa_residency=visa_residency, clinical_experience_months=clinical_experience_months, research_publications=research_publications, research_experience_months=research_experience_months, prior_residency=prior_residency, prior_residency_match=prior_residency_match, probability=probability, message=message)
 

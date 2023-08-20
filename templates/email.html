@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Residency Admit Probability</title>
+</head>
+<body>
+    <h1>Thank you for using our Residency Admit Probability Calculator!</h1>
+    <h2>Here are your results:</h2>
+    <table cellspacing="0" style="border: 2px dashed #FB4314; width: 500px;">
+        <tr>
+            <th>Name:</th><td>{{ firstname }} {{ lastname }}</td>
+        </tr>
+        <tr style="background-color: #e0e0e0;">
+            <th>Email:</th><td>{{ email }}</td>
+        </tr>
+        <tr>
+            <th>Primary Speciality:</th>
+            <td>
+                {% if primary_speciality == 'anesth' %}
+                Anesthesiology
+                {% elif primary_speciality == 'intmed' %}
+                Internal Medicine
+                {% elif primary_speciality == 'neuro' %}
+                Neurology
+                {% elif primary_speciality == 'patho' %}
+                Pathology
+                {% elif primary_speciality == 'psych' %}
+                Psychiatry
+                {% elif primary_speciality == 'fammed' %}
+                Family Medicine
+                {% elif primary_speciality == 'pediat' %}
+                Pediatrics
+                {% else %}
+                Unknown
+                {% endif %}
+            </td>
+        </tr>
+        <tr style="background-color: #e0e0e0;">
+            <th>Probability:</th><td>{{ probability }}%</td>
+        </tr>
+        <tr>
+            <th>Website:</th><td><a href="https://www.usmlesarthi.com">www.usmlesarthi.com</a></td>
+        </tr>
+    </table>
+    <p>For further details or assistance, please visit our website or contact our support team.</p>
+</body>
+</html>
