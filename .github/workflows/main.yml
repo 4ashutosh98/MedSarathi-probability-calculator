@@ -1,0 +1,25 @@
+name: My CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      POSTGRE_DATABASE_URI: ${{ secrets.POSTGRE_DATABASE_URI }}
+      ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+      ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+      APP_SECRET_KEY: ${{ secrets.APP_SECRET_KEY }}
+
+    steps:
+    - name: Check out the code
+      uses: actions/checkout@v2
+
+    - name: Run the code
+      run: |
+        # Your commands here
